@@ -1,0 +1,167 @@
+{
+  "name": "JIRA Agent 1",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "58c568f7-65f8-4e82-a4bc-58cd176adf31",
+      "name": "When chat message received",
+      "webhookId": "d7ffaccb-49fd-4645-97fb-d26d30fb77d1"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "You are a QA automation engineer with 15 years of experience, you will get the details of the JIRA ticket through the chat. your task is to create a JIRA ticket with proper steps to reproduce and proper instructions like jira. user the jira tool attached. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "9393e9b6-46b1-4f03-84a0-aae46a397e34",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "project": {
+          "__rl": true,
+          "value": "10000",
+          "mode": "list",
+          "cachedResultName": "QA Testing"
+        },
+        "issueType": {
+          "__rl": true,
+          "value": "10007",
+          "mode": "list",
+          "cachedResultName": "Bug"
+        },
+        "summary": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summary', ``, 'string') }}",
+        "additionalFields": {
+          "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}"
+        }
+      },
+      "type": "n8n-nodes-base.jiraTool",
+      "typeVersion": 1,
+      "position": [
+        480,
+        160
+      ],
+      "id": "94a843eb-199f-48e9-b3da-38820896e3b6",
+      "name": "Create an issue in Jira Software under QA Testing project",
+      "credentials": {
+        "jiraSoftwareCloudApi": {
+          "id": "ljPH9fUAdGyBVqZm",
+          "name": "Jira SW Cloud account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        288,
+        208
+      ],
+      "id": "2e90c0da-8542-412e-aac1-9ae1d6f42f2d",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "model": "llama-3.1-8b-instant",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        128,
+        224
+      ],
+      "id": "88482a4e-0b0b-4312-ac23-d012b78cae74",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an issue in Jira Software under QA Testing project": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "aaf58fa0-3baa-40b0-a3a9-6e0859503eea",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "70dd56ebeb86daacd5f465dcfc8cc2f78e0d04826e4c0ac1e9f0eada8938203c"
+  },
+  "nodeGroups": [],
+  "id": "n2OggudW6cei6dqK",
+  "tags": [
+    {
+      "name": "read the feature",
+      "id": "qroGbMDsGoakiqvb",
+      "updatedAt": "2026-06-09T08:44:37.485Z",
+      "createdAt": "2026-06-09T08:44:37.485Z"
+    }
+  ]
+}

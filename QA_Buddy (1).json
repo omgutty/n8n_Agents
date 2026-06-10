@@ -1,0 +1,102 @@
+{
+  "name": "QA_Buddy",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nMy name is Om G. How can I assist you today?",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -208,
+        -48
+      ],
+      "id": "66e0d09c-ecbb-4ef6-a47f-29061ff6eb51",
+      "name": "When chat message received",
+      "webhookId": "fd496ac1-5f2a-4334-a932-4ab760e79839"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "you are a QA assistant, you will only answer the Queries related to QA . Expected answer will be in technical answer which is related to QA only. "
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        0,
+        -80
+      ],
+      "id": "edaf0797-f831-41a3-862b-6744c00d50d6",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -96,
+        144
+      ],
+      "id": "4aa2d600-3749-4993-bf00-5a55da39bd00",
+      "name": "Qwen Model",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qwen Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c6d6f241-d096-4b1d-8843-a3821c829d03",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "70dd56ebeb86daacd5f465dcfc8cc2f78e0d04826e4c0ac1e9f0eada8938203c"
+  },
+  "nodeGroups": [],
+  "id": "H7WiMP2kvZ19AU7y",
+  "tags": [
+    {
+      "updatedAt": "2026-06-09T07:38:25.878Z",
+      "createdAt": "2026-06-09T07:38:25.878Z",
+      "id": "jWhDVnVUrIMKSgz9",
+      "name": "testplan"
+    }
+  ]
+}
