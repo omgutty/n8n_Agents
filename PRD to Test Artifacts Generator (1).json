@@ -1,0 +1,447 @@
+{
+  "name": "PRD to Test Artifacts Generator",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "PRD to Test Artifacts Generator",
+        "formDescription": "Upload a Product Requirements Document (PDF)",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "PRD PDF",
+              "fieldType": "file",
+              "fieldName": "prd_pdf",
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -304,
+        720
+      ],
+      "id": "6f0316dd-bb19-46b7-8b1f-9dc3fe8fead2",
+      "name": "On form submission",
+      "webhookId": "cd587170-b292-4716-9e55-6746ae5e9a6b"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "prd_pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -80,
+        720
+      ],
+      "id": "27722af6-2fde-4e01-9285-354085fb5d08",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Extract from File').item.json.text }}",
+        "options": {
+          "systemMessage": ""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        144,
+        720
+      ],
+      "id": "4040e6d3-7ac3-4a2e-80f6-2e2e2603e5df",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        224,
+        944
+      ],
+      "id": "648aed6d-40d7-4221-8282-2fce448eacbb",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are a Senior QA Engineer.\n\nGenerate detailed test cases from the provided Test Plan.\n\nRequirements:\n\n- Cover all functional scenarios\n- Cover positive and negative scenarios\n- Cover validation scenarios\n- Cover boundary conditions\n- Cover security related checks where applicable\n\nOutput ONLY CSV format.\n\nColumns:\n\nTest Case ID,\nModule,\nTitle,\nPrecondition,\nSteps,\nTest Data,\nExpected Result,\nPriority,\nType\n\nGenerate comprehensive coverage."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        496,
+        592
+      ],
+      "id": "018d0122-4585-496f-b88c-a17d38e03bc2",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        576,
+        816
+      ],
+      "id": "ec77c100-1eb0-4aca-81dc-6d36e2ef3a7f",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are a Senior Software Development Engineer in Test (SDET).\n\nYour task is to generate Playwright TypeScript automation scripts from the provided test cases.\n\nRequirements:\n\n1. Use Playwright Test Framework.\n2. Use TypeScript.\n3. Follow Page Object Model principles.\n4. Use test.describe().\n5. Use test.beforeEach() where appropriate.\n6. Add assertions using expect().\n7. Include meaningful comments.\n8. Generate production-quality code.\n9. Cover all provided test cases.\n10. Include example Page Object classes if needed.\n\nOutput format:\n\nMarkdown only.\n\nUse code blocks:\n\n```typescript"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        848,
+        464
+      ],
+      "id": "e283f474-a0ed-448c-b20e-fa51a6096a31",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        928,
+        688
+      ],
+      "id": "9db01676-d95b-489b-bd23-701476250100",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "={{ $json.output }}",
+        "options": {
+          "fileName": "test_cases.csv"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        720
+      ],
+      "id": "b7098958-eea2-43a7-a912-aa47573c5c1e",
+      "name": "Convert to File1"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "=content",
+        "options": {
+          "fileName": "test_plan.md"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        928
+      ],
+      "id": "d1c3faa5-048a-48bd-a58f-f88bd4f39554",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "={{ $json.output }}",
+        "options": {
+          "fileName": "playwright_test_cases.md"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        464
+      ],
+      "id": "4ab56f8d-569c-4adb-b001-d362a57b628b",
+      "name": "Convert to File2"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1424,
+        704
+      ],
+      "id": "e55c47c9-421f-4bc9-924f-ca24451b9e0d",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "/Home",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "root",
+          "cachedResultName": "/ (Root folder)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1648,
+        720
+      ],
+      "id": "f485364f-a5c4-4eee-9bc6-b852c3df05d9",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "thjD5rm8D6GQWagk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32123c8c-8f05-406d-9958-75378e8100d4",
+              "name": "content",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        912,
+        928
+      ],
+      "id": "1c600730-be5f-4748-87eb-6d7a9d1f105f",
+      "name": "Edit Fields"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Convert to File1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Convert to File2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "39389655-b386-4dfd-afe5-a881fcf5a88d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "70dd56ebeb86daacd5f465dcfc8cc2f78e0d04826e4c0ac1e9f0eada8938203c"
+  },
+  "nodeGroups": [],
+  "id": "3o1OhZFasqW47Nwr",
+  "tags": []
+}

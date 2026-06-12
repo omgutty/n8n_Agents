@@ -1,0 +1,552 @@
+{
+  "name": "phase2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -592,
+        832
+      ],
+      "id": "59aa378b-8588-4e0a-a485-ef4b7ca3cd94",
+      "name": "When clicking ‘Execute workflow’",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "bf5baaa1-172e-4330-ae85-4d5cc87f455e",
+              "name": "prd_text",
+              "value": "Product Requirements Document (PRD) Product Name: VWO – Digital Experience Optimization Platform Product URL: https://app.vwo.com/ Prepared By: Pramod Dutta Date: January 7, 2026 1. Product Overview VWO (Visual Website Optimizer) is an enterprise-grade Digital Experience Optimization (DXO) and Conversion Rate Optimization (CRO) platform that enables businesses to understand user behavior, test experiences, personalize interactions, and make data-driven decisions to improve conversion outcomes across web and mobile digital properties. It is widely used by product, marketing, UX, and analytics teams to optimize user journeys and business metrics. (Website)",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -368,
+        832
+      ],
+      "id": "993e0634-041c-4a39-92a0-83e25fed7804",
+      "name": "Edit Fields",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        592
+      ],
+      "id": "5fa9a193-80d8-4fdb-96c9-1f3155bfc616",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        288,
+        336
+      ],
+      "id": "90269bcd-075d-4de5-8ea1-c02bdf0efddf",
+      "name": "Groq Chat Model1",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "qwen/qwen3-32b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        640,
+        192
+      ],
+      "id": "25104661-2ee8-42d8-885b-c357c613e5b7",
+      "name": "Groq Chat Model2",
+      "credentials": {
+        "groqApi": {
+          "id": "w3NQz3SeLob40uQ5",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "prd_pdf",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "prd_pdf",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "🎉 Generation Complete  The PRD has been processed successfully.  Files Generated: ✅ test_plan.md ✅ test_cases.csv ✅ playwright_test_cases.md  The files are available in the workflow execution results."
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -592,
+        368
+      ],
+      "id": "796ccf7d-72ee-477c-bcbe-54daf34fc5e5",
+      "name": "On form submission",
+      "webhookId": "f7dfbe1b-de12-437b-86ee-b0cc2e2b6476"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "prd_pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -368,
+        368
+      ],
+      "id": "04f4fbc2-299a-42fd-9c53-350d180da703",
+      "name": "Extract PDF Text"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{$json.text}}",
+        "options": {
+          "systemMessage": "You are a Senior QA Architect.\n\nAnalyze the provided Product Requirements Document (PRD).\n\nGenerate a detailed Test Plan in Markdown format.\n\nInclude:\n\n# Test Plan\n\n## Objective\n## Scope\n## Assumptions\n## In Scope\n## Out of Scope\n## Test Strategy\n## Functional Areas\n## Test Scenarios\n## Risks\n## Test Environment\n## Entry Criteria\n## Exit Criteria\n\nIMPORTANT:\n- Do NOT explain your reasoning.\n- Do NOT include thinking.\n- Do NOT include <think> tags.\n- Do NOT include markdown fences such as ```markdown.\n- Return only the final markdown document.\n\nGenerate test scenarios in a numbered hierarchy.\n\nExample:\n\n1. Authentication\n   1.1 Valid Login\n   1.2 Invalid Login\n\n2. User Management\n   2.1 Create User\n   2.2 Delete User\n\nOutput markdown only.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -144,
+        368
+      ],
+      "id": "115ddc84-1c68-4f40-9b6c-b52fc4cc6aa5",
+      "name": "Generate Test Plan"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "binaryPropertyName": "output",
+        "options": {
+          "fileName": "test_plan.md"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        272,
+        608
+      ],
+      "id": "52c3d7da-9c37-4f8f-85de-86dbf68631b7",
+      "name": "Create test_plan.md"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are a Senior QA Engineer.\n\nGenerate detailed test cases from the supplied Test Plan.\n\nRequirements:\n\n- Cover all functional scenarios\n- Cover positive scenarios\n- Cover negative scenarios\n- Cover validation scenarios\n- Cover boundary conditions\n- Cover security scenarios where applicable\n\nIMPORTANT:\n\nThe FIRST line of the output MUST be exactly:\n\nTest Case ID,Module,Title,Precondition,Steps,Test Data,Expected Result,Priority,Type\n\nAfter the header row, generate all test cases in RFC4180 compliant CSV format.\n\nExample:\n\nTest Case ID,Module,Title,Precondition,Steps,Test Data,Expected Result,Priority,Type\nTC001,Login,Valid Login,User exists,\"1. Open Login Page 2. Enter credentials 3. Click Login\",\"user@test.com / Password123\",\"User logs in successfully\",High,Positive\n\nRules:\n\n- Output ONLY CSV\n- Do NOT use markdown\n- Do NOT use code blocks\n- Do NOT include explanations\n- Do NOT include introductory text\n- Do NOT include <think>"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        208,
+        112
+      ],
+      "id": "4d224d07-f67b-4fbf-9210-4c9c81a98a9b",
+      "name": "Generate Test Cases"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f476309-b7d0-432a-98f2-3f7423e89555",
+              "name": "csvContent",
+              "value": "=={{ \"Test Case ID,Module,Title,Precondition,Steps,Test Data,Expected Result,Priority,Type\\n\" + $json.output }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        624,
+        368
+      ],
+      "id": "dc0ca0f1-c4fa-4b5c-94f0-d4c398a271e9",
+      "name": "Add CSV Header"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "csvContent",
+        "binaryPropertyName": "output",
+        "options": {
+          "fileName": "test_cases.csv"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        368
+      ],
+      "id": "cfc0d259-2810-449c-80e9-be72e03414ff",
+      "name": "Create test_cases.csv"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{ $json.output }}",
+        "options": {
+          "systemMessage": "You are a Senior SDET and Playwright Automation Architect.\n\nConvert the supplied test cases into Playwright TypeScript automation code.\n\nRequirements:\n\n- Use Playwright Test Framework\n- Use TypeScript\n- Use Page Object Model (POM)\n- Use test.describe()\n- Use test.beforeEach()\n- Use expect() assertions\n- Generate reusable and maintainable code\n- Follow enterprise automation standards\n\nOutput format:\n\n# Playwright Test Suite\n\n## Page Object\n\n<typescript code>\n\n## Test Specification\n\n<typescript code>\n\nIMPORTANT:\n\n- Start directly with \"# Playwright Test Suite\"\n- Do not provide explanations\n- Do not provide introductions\n- Do not describe project structure\n- Do not provide summaries\n- Do not provide reasoning\n- Output markdown only"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        560,
+        -32
+      ],
+      "id": "dd173b3e-e3c9-4463-9a29-3fe2893182a8",
+      "name": "Generate Playwright Scripts"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "binaryPropertyName": "output",
+        "options": {
+          "fileName": "playwright_test_cases.md"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        912,
+        80
+      ],
+      "id": "d8d47c59-d8f7-467e-860f-56ae7f1e2028",
+      "name": "Generate Playwright Scripts1"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "output",
+        "name": "Create test_plan.md",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1iV2K8VGIy7VSNLzbXafKsFOT-jTnavQC",
+          "mode": "list",
+          "cachedResultName": "PRD_Automation_Output",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1iV2K8VGIy7VSNLzbXafKsFOT-jTnavQC"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        624,
+        608
+      ],
+      "id": "a1ead8f5-0efd-4f4f-8853-29a48d9f1415",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "rlQ7fGUNKevGlUwZ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "output",
+        "name": "Create test_cases.csv",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1iV2K8VGIy7VSNLzbXafKsFOT-jTnavQC",
+          "mode": "list",
+          "cachedResultName": "PRD_Automation_Output",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1iV2K8VGIy7VSNLzbXafKsFOT-jTnavQC"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1136,
+        368
+      ],
+      "id": "523f951e-c27b-4001-8693-1e04461267cf",
+      "name": "Upload file1",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "rlQ7fGUNKevGlUwZ",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "output",
+        "name": "Create playwright_test_cases.md",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1iV2K8VGIy7VSNLzbXafKsFOT-jTnavQC",
+          "mode": "list",
+          "cachedResultName": "PRD_Automation_Output",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1iV2K8VGIy7VSNLzbXafKsFOT-jTnavQC"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        1136,
+        80
+      ],
+      "id": "e7472ecd-b796-405c-9c89-901f9dbefc6e",
+      "name": "Upload file2",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "rlQ7fGUNKevGlUwZ",
+          "name": "Google Drive account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        []
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Test Plan",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Test Cases",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Generate Playwright Scripts",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF Text": {
+      "main": [
+        [
+          {
+            "node": "Generate Test Plan",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Test Plan": {
+      "main": [
+        [
+          {
+            "node": "Generate Test Cases",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create test_plan.md",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Test Cases": {
+      "main": [
+        [
+          {
+            "node": "Generate Playwright Scripts",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Add CSV Header",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Add CSV Header": {
+      "main": [
+        [
+          {
+            "node": "Create test_cases.csv",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Playwright Scripts": {
+      "main": [
+        [
+          {
+            "node": "Generate Playwright Scripts1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create test_plan.md": {
+      "main": [
+        [
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create test_cases.csv": {
+      "main": [
+        [
+          {
+            "node": "Upload file1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Playwright Scripts1": {
+      "main": [
+        [
+          {
+            "node": "Upload file2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "32adce89-a4d1-4b1c-ad1e-904c9adf5077",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "70dd56ebeb86daacd5f465dcfc8cc2f78e0d04826e4c0ac1e9f0eada8938203c"
+  },
+  "nodeGroups": [],
+  "id": "sBWyGQzhoRJgxIKT",
+  "tags": []
+}
